@@ -1,0 +1,45 @@
+{
+  "name": "next-reddit-clone",
+  "version": "1.0.0",
+  "description": "Reddit clone using NextJS, aws, GraphQL, typescript",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdelposada/next-reddit-clone.git"
+  },
+  "keywords": [
+    "NextJS",
+    "aws",
+    "GraphQL",
+    "Typescript",
+    "PostgreSQL",
+    "TypeORM",
+    "clone"
+  ],
+  "author": "Abdel Posada",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdelposada/next-reddit-clone/issues"
+  },
+  "homepage": "https://github.com/abdelposada/next-reddit-clone#readme",
+  "dependencies": {
+    "argon2": "^0.28.5",
+    "next": "^12.1.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "type-graphql": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "@types/react": "^17.0.43",
+    "@types/react-dom": "^17.0.14",
+    "eslint": "^8.12.0",
+    "eslint-config-next": "^12.1.4",
+    "typescript": "^4.6.3"
+  }
+}
