@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "lib": ["dom", "es6", "dom.iterable", "esnext"],
+    "target": "es2017",
+    "lib": ["dom", "es6", "dom.iterable", "esnext", "esnext.asynciterable"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -14,10 +14,27 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "removeComments": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "strictPropertyInitialization": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@/graphql": ["lib/graphql/*"]
+      "@graphql/*": ["lib/graphql/*"],
+      "@handlers/*": ["lib/handlers/*"],
+      "@middlewares/*": ["lib/middlewares/*"],
+      "@types": ["lib/types"],
+      "@constants": ["lib/constants"],
+      "@config": ["lib/config"],
+      "@db": ["lib/db"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
