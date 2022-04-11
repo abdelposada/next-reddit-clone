@@ -3,8 +3,8 @@ import Cors from 'cors';
 import type { PageConfig } from 'next';
 import { ApolloServer } from 'apollo-server-micro';
 import { buildSchema } from 'type-graphql';
-import { UserResolver } from '@graphql/resolvers';
-import { getAppDataSource } from 'lib/db';
+import { UserResolver, PostResolver } from '@graphql/resolvers';
+import { getAppDataSource } from '@db';
 import { ServerResponse } from 'http';
 import initMiddleware from '@middlewares/cors';
 import { isProd } from '@constants';
@@ -18,13 +18,13 @@ export const config: PageConfig = {
 };
 
 const schema = await buildSchema({
-  resolvers: [UserResolver],
+  resolvers: [UserResolver, PostResolver],
   dateScalarMode: 'isoDate',
 });
 
 const apolloServer = new ApolloServer({
   schema,
-  context: async ({ req, res, connection }) => {
+  context: async ({ req, res }) => {
     const AppDataSource = getAppDataSource();
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
@@ -33,8 +33,6 @@ const apolloServer = new ApolloServer({
     return {
       req,
       res,
-      connection,
-      AppDataSource,
     };
   },
   plugins: [],

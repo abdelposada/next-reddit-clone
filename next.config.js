@@ -8,6 +8,13 @@ const nextConfig = {
     config.experiments.topLevelAwait = true;
     return config;
   },
+  webpackDevMiddleware: config => {
+    config.watchOptions = {
+      poll: 1000,
+      aggregateTimeout: 300,
+    }
+    return config
+  },
 };
 
 module.exports = nextConfig;

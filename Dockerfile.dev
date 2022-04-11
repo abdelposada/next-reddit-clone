@@ -1,0 +1,11 @@
+FROM node:16-alpine
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+## Debug using vscode, no need to run this
+CMD [ "npm", "run", "dev" ]
+# ENTRYPOINT ["/bin/sh", "-c", "while true; do sleep 1; done"]

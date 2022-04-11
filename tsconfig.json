@@ -28,9 +28,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@generated/*": ["src/generated/*"],
       "@graphql/*": ["lib/graphql/*"],
       "@handlers/*": ["lib/handlers/*"],
       "@middlewares/*": ["lib/middlewares/*"],
+      "@repositories/*": ["lib/repositories/*"],
       "@types": ["lib/types"],
       "@constants": ["lib/constants"],
       "@config": ["lib/config"],

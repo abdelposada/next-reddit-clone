@@ -1,0 +1,6 @@
+fragment PostFields on Post {
+  id
+  createdAt
+  updatedAt
+  title
+}

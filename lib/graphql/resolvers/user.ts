@@ -14,12 +14,12 @@ export class UserResolver {
       return null;
     }
 
-    const user = await User.findOneOrFail({ where: { id: 'req.session.userId' } });
+    const user = await User.findOneOrFail({ where: { id: 'req.userId' } });
     return user;
   }
 
   @Mutation(() => User)
-  async register(@Arg('input') { username, password }: UserInput, @Ctx() { req }: NextContext): Promise<User> {
+  async register(@Arg('input') { username, password }: UserInput, @Ctx() {}: NextContext): Promise<User> {
     const hashedPassword = await argon2.hash(password);
     const user = User.create({ username, password: hashedPassword });
     await user.save();
@@ -28,7 +28,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async login(@Arg('input') { username, password }: UserInput, @Ctx() { req }: NextContext): Promise<User> {
+  async login(@Arg('input') { username, password }: UserInput, @Ctx() {}: NextContext): Promise<User> {
     const user = await User.findOne({ where: { username } });
 
     // Let's not say we didn't find the user and just throw incorrect credentials instead
