@@ -1,5 +1,0 @@
-mutation login($input: UserInput!) {
-  login(input: $input) {
-    ...UserResponse
-  }
-}

@@ -1,4 +1,4 @@
-query posts {
+query Posts {
   posts {
     ...PostFields
   }

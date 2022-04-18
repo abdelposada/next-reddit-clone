@@ -1,11 +1,15 @@
 import { GraphQLClient } from 'graphql-request';
-import * as Dom from 'graphql-request/dist/types.dom';
-import gql from 'graphql-tag';
+import { RequestInit } from 'graphql-request/dist/types.dom';
+import { useMutation, useQuery, UseMutationOptions, UseQueryOptions } from 'react-query';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+
+function fetcher<TData, TVariables>(client: GraphQLClient, query: string, variables?: TVariables, headers?: RequestInit['headers']) {
+  return async (): Promise<TData> => client.request<TData, TVariables>(query, variables, headers);
+}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -98,12 +102,19 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'User', id: string, username: string } };
 
+export type RegisterMutationVariables = Exact<{
+  input: UserInput;
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string, username: string } };
+
 export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: string, createdAt: any, updatedAt: any, title: string }> };
 
-export const PostFieldsFragmentDoc = gql`
+export const PostFieldsFragmentDoc = `
     fragment PostFields on Post {
   id
   createdAt
@@ -111,40 +122,70 @@ export const PostFieldsFragmentDoc = gql`
   title
 }
     `;
-export const UserResponseFragmentDoc = gql`
+export const UserResponseFragmentDoc = `
     fragment UserResponse on User {
   id
   username
 }
     `;
-export const LoginDocument = gql`
-    mutation login($input: UserInput!) {
+export const LoginDocument = `
+    mutation Login($input: UserInput!) {
   login(input: $input) {
     ...UserResponse
   }
 }
     ${UserResponseFragmentDoc}`;
-export const PostsDocument = gql`
-    query posts {
+export const useLoginMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<LoginMutation, TError, LoginMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<LoginMutation, TError, LoginMutationVariables, TContext>(
+      ['Login'],
+      (variables?: LoginMutationVariables) => fetcher<LoginMutation, LoginMutationVariables>(client, LoginDocument, variables, headers)(),
+      options
+    );
+export const RegisterDocument = `
+    mutation Register($input: UserInput!) {
+  register(input: $input) {
+    ...UserResponse
+  }
+}
+    ${UserResponseFragmentDoc}`;
+export const useRegisterMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<RegisterMutation, TError, RegisterMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<RegisterMutation, TError, RegisterMutationVariables, TContext>(
+      ['Register'],
+      (variables?: RegisterMutationVariables) => fetcher<RegisterMutation, RegisterMutationVariables>(client, RegisterDocument, variables, headers)(),
+      options
+    );
+export const PostsDocument = `
+    query Posts {
   posts {
     ...PostFields
   }
 }
     ${PostFieldsFragmentDoc}`;
-
-export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
-
-
-const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
-
-export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
-  return {
-    login(variables: LoginMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<LoginMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<LoginMutation>(LoginDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'login', 'mutation');
-    },
-    posts(variables?: PostsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<PostsQuery>(PostsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'posts', 'query');
-    }
-  };
-}
-export type Sdk = ReturnType<typeof getSdk>;
+export const usePostsQuery = <
+      TData = PostsQuery,
+      TError = unknown
+    >(
+      client: GraphQLClient,
+      variables?: PostsQueryVariables,
+      options?: UseQueryOptions<PostsQuery, TError, TData>,
+      headers?: RequestInit['headers']
+    ) =>
+    useQuery<PostsQuery, TError, TData>(
+      variables === undefined ? ['Posts'] : ['Posts', variables],
+      fetcher<PostsQuery, PostsQueryVariables>(client, PostsDocument, variables, headers),
+      options
+    );

@@ -1,4 +1,5 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { getSession } from 'next-auth/react';
 import { PostRepository } from '@repositories/post';
 import { Post } from '@graphql/models/Post';
 import { PostInput } from '@graphql/types/post';
@@ -7,7 +8,8 @@ import { NextContext } from '@types';
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  posts(@Ctx() {}: NextContext): Promise<Post[]> {
+  async posts(@Ctx() { req }: NextContext): Promise<Post[]> {
+    const session = await getSession({ req });
     return PostRepository.find({});
   }
 

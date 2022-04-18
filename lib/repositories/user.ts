@@ -1,4 +1,4 @@
-import { getAppDataSource } from '@db';
+import AppDataSource from '@db';
 import { User } from '@graphql/models/User';
 
-export const UserRepository = getAppDataSource().getRepository(User);
+export const UserRepository = AppDataSource.getRepository(User);

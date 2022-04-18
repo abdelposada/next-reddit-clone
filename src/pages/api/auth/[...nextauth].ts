@@ -1,19 +1,22 @@
+import { NextApiHandler } from 'next';
+import { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth/next';
 import Auth0Provider from 'next-auth/providers/auth0';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import FacebookProvider from 'next-auth/providers/facebook';
+import GoogleProvider from 'next-auth/providers/google';
 import argon2 from 'argon2';
 import config from '@config';
 import { User } from '@graphql/models/User';
 import { isProd } from '@constants';
-import { getAppDataSource } from '@db';
+import AppDataSource from '@db';
 
 const {
-  authProviders: { auth0, facebook },
+  authProviders: { auth0, facebook, google },
   secret,
 } = config.auth;
 
-export default NextAuth({
+export const nextAuthOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -22,22 +25,14 @@ export default NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, _req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'Wissar', email: 'wissar@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-
         if (!credentials) {
           return null;
         }
 
-        const AppDataSource = getAppDataSource();
         if (!AppDataSource.isInitialized) {
           await AppDataSource.initialize();
         }
-        const userRepository = getAppDataSource().getRepository(User);
+        const userRepository = AppDataSource.getRepository(User);
         const user = await userRepository.findOneBy({ username: credentials?.username });
 
         if (!user) {
@@ -50,7 +45,7 @@ export default NextAuth({
           return null;
         }
         // Return null if user data could not be retrieved
-        return user;
+        return { id: user.id, name: user.username, email: user.username };
       },
     }),
     Auth0Provider({
@@ -63,14 +58,57 @@ export default NextAuth({
       clientId: facebook.clientId,
       clientSecret: facebook.clientSecret,
     }),
+    GoogleProvider({
+      clientId: google.clientId,
+      clientSecret: google.clientSecret,
+    }),
   ],
   secret,
-  session: {
-    strategy: 'database',
-    maxAge: 30 * 24 * 60 * 60,
+  // session: {
+  //   strategy: 'database',
+  //   maxAge: 30 * 24 * 60 * 60,
+  // },
+  pages: {
+    signIn: '/account/login',
+    error: '/error',
   },
-  pages: {},
-  callbacks: {},
-  events: {},
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
+    },
+  },
   debug: !isProd,
-});
+  useSecureCookies: isProd,
+  cookies: {
+    sessionToken: {
+      name: 'lilreddit.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: isProd,
+      },
+    },
+    callbackUrl: {
+      name: `lilreddit.callback-url`,
+      options: {
+        sameSite: 'lax',
+        path: '/',
+        secure: isProd,
+      },
+    },
+    csrfToken: {
+      name: `lilreddit.csrf-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: isProd,
+      },
+    },
+  },
+};
+
+const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, nextAuthOptions);
+
+export default authHandler;

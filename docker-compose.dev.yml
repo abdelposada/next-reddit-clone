@@ -1,13 +1,14 @@
 version: "3"
 services:
-  next:
-    container_name: next-reddit
-    image: nextjs-dev
+  app:
+    container_name: lilreddit-app
+    image: lilreddit-app
     build:
       context: ./
       dockerfile: Dockerfile.dev
+    env_file: .env.local
     depends_on:
-      - postgres
+      - db
     volumes: # For hot reload
       - ./:/app
       - /node_modules
@@ -15,7 +16,8 @@ services:
     ports:
       - "3000:3000"
       - "9229:9229"
-  postgres:
+  db:
+    container_name: lilreddit-db
     image: postgres:14.2-alpine
     restart: always
     ports:

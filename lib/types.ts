@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-
-type Session = { session: { userId: string } };
-type UserSession = Session & { userId: string };
+import { ServerResponse } from 'http';
+import { MicroRequest } from 'apollo-server-micro/dist/types';
+import type { Session } from 'next-auth';
 
 export type NextContext = {
-  req: NextApiRequest & UserSession;
-  res: NextApiResponse;
+  req: MicroRequest;
+  res: ServerResponse;
+  session: Session;
 };

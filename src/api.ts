@@ -1,9 +1,12 @@
 import { GraphQLClient } from 'graphql-request';
 import { QueryClient } from 'react-query';
-import { getSdk } from '@generated/graphql';
 
-const gqlClient = new GraphQLClient('http://localhost:3000/api/graphql');
-export const { login, posts } = getSdk(gqlClient);
+const graphqlURL: string = process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT || '';
+console.log(graphqlURL)
+
+export const gqlClient = new GraphQLClient(graphqlURL, {
+  credentials: 'include',
+});
 
 export const queryClient = new QueryClient({
   defaultOptions: {

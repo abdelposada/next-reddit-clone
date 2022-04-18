@@ -1,14 +1,16 @@
 import type { AppProps } from 'next/app';
-import { Hydrate, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
+import { SessionProvider } from 'next-auth/react';
 import { queryClient } from '../api';
+import '@styles/globals.css';
 
 function RedditApp({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Hydrate state={pageProps.dehydratedState}>
+    <SessionProvider session={pageProps.session}>
+      <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
-      </Hydrate>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }
 

@@ -27,16 +27,19 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
       "@generated/*": ["src/generated/*"],
       "@graphql/*": ["lib/graphql/*"],
       "@handlers/*": ["lib/handlers/*"],
       "@middlewares/*": ["lib/middlewares/*"],
       "@repositories/*": ["lib/repositories/*"],
       "@types": ["lib/types"],
+      "@components/*": ["components/*"],
       "@constants": ["lib/constants"],
+      "@uitypes": ["src/types"],
       "@config": ["lib/config"],
-      "@db": ["lib/db"]
+      "@db": ["lib/db"],
+      "@styles/*": ["styles/*"],
+      "@utils": ["src/utils"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
